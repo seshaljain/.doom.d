@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: CPPMain
+# key: io
+# --
+
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+
+int main() {
+    $0
+    return 0;
+}
