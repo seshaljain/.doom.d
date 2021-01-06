@@ -1,0 +1,129 @@
+#+TITLE: Doom Emacs Configuration
+#+AUTHOR: Seshal Jain
+#+PROPERTY: header-args:emacs-lisp :tangle yes :results silent
+
+#+BEGIN_QUOTE
+I’m sure I’ll be tweaking it forever though, it’s almost as satisfying
+as actually using it.
+#+END_QUOTE
+
+Make this file run (slightly) faster with lexical binding
+#+BEGIN_SRC emacs-lisp
+;;; config.el -*- lexical-binding: t; -*-
+#+END_SRC
+
+* Personal Information
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Seshal Jain"
+      user-mail-address "seshaljain11@gmail.com")
+#+END_SRC
+
+* Better Defaults
+** Font
+#+BEGIN_SRC emacs-lisp
+(setq doom-font "Iosevka Term Curly 14"
+      doom-variable-pitch-font (font-spec :family "Inter" :size 16))
+#+END_SRC
+
+** Theme
+#+BEGIN_SRC emacs-lisp
+(setq doom-theme 'doom-dracula)
+#+END_SRC
+
+** Fullscreen
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
+
+** Display line numbers
+Relative line numbers in programming modes
+#+BEGIN_SRC emacs-lisp
+(setq display-line-numbers-type 'relative)
+#+END_SRC
+
+** Prefer vertical splits
+#+BEGIN_SRC emacs-lisp
+(setq split-width-threshold 120)
+#+END_SRC
+* Packages
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle packages.el :results silent
+:END:
+Define =package!= and =use-package!= declaration in the same section
+
+All package install directives are tangled to =packages.el= while all package configurations are tangled to =config.el=.
+The trick is to set =:tangle packages.el= to this section, and specify =:tangle yes= to all config blocks. This tangles them to =config.el=, the default tangle file for this document. Ingenious ;)
+
+This file shouldn't be byte compiled
+#+begin_src emacs-lisp
+;; -*- no-byte-compile: t; -*-
+#+end_src
+
+** org
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! org
+  (setq!
+         org-edit-src-content-indentation 0
+         org-src-window-setup 'current-window))
+#+END_SRC
+
+*** Org Capture
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! org
+  (setq! org-capture-templates
+        '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
+           "**** %^{Link}\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
+          ("c" "100DaysofCode" entry (file "~/100-days-of-code/R2.org")
+           "* Day %? %t"
+           :unnarrowed t
+           :prepend t
+           :empty-lines 1)
+          ("l" "Links" entry (file+olp+datetree "~/GithubLinks/README.org")
+           "**** %^{Link}\n%?"))))
+#+END_SRC
+
+*** Org Export
+Syntax highlighting via =Minted=
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! org
+  (setq! org-latex-listings 'minted
+         org-latex-packages-alist '(("" "minted"))
+         org-latex-pdf-process
+         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+#+END_SRC
+
+Source code block formatting
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! org
+  (setq! org-latex-minted-options '(("breaklines" "true")
+                                    ("breakanywhere" "true")
+                                    ("linenos"))))
+#+END_SRC
+
+** counsel
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! ivy
+  (setq! ivy-height 10))
+#+END_SRC
+** avy
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! avy
+  (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
+#+END_SRC
+
+** eglot
+#+BEGIN_SRC emacs-lisp :tangle no
+(package! eglot)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(after! eglot
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd-10")))
+#+END_SRC
+
+** doom-modeline
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq! doom-modeline-icon nil)
+#+END_SRC
