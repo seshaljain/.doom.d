@@ -98,8 +98,7 @@ Source code block formatting
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! org
   (setq! org-latex-minted-options '(("breaklines" "true")
-                                    ("breakanywhere" "true")
-                                    ("linenos"))))
+                                    ("breakanywhere" "true"))))
 #+END_SRC
 
 ** counsel
