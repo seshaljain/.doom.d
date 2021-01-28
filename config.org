@@ -126,14 +126,3 @@ Source code block formatting
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq! doom-modeline-icon nil)
 #+END_SRC
-** golden-ratio
-#+BEGIN_SRC emacs-lisp
-(package! golden-ratio
-  :recipe (:host github :repo "roman/golden-ratio.el"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package! golden-ratio
-  :config
-  (setq! golden-ratio-mode 1))
-#+END_SRC
