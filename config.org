@@ -32,8 +32,8 @@ Make this file run (slightly) faster with lexical binding
 
 ** Fullscreen
 #+BEGIN_SRC emacs-lisp
-(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
+(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
@@ -74,15 +74,12 @@ This file shouldn't be byte compiled
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! org
   (setq! org-capture-templates
-        '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
-           "**** %^{Link}\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
-          ("c" "100DaysofCode" entry (file "~/100-days-of-code/R2.org")
-           "* Day %? %t"
-           :unnarrowed t
-           :prepend t
-           :empty-lines 1)
-          ("l" "Links" entry (file+olp+datetree "~/GithubLinks/README.org")
-           "**** %^{Link}\n%?"))))
+         '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
+            "**** %^{Link}\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
+           ("l" "Links" entry (file+olp+datetree "~/GithubLinks/README.org")
+            "**** %^{Link}\n%?")
+           ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
+            "* %?\nEntered on %U\n  %i\n  %a"))))
 #+END_SRC
 
 *** Org Export
