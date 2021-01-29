@@ -94,6 +94,45 @@ Syntax highlighting via =Minted=
            "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 #+END_SRC
 
+LaTeX class for college assignments
+#+begin_src emacs-lisp :tangle yes
+(after! ox-latex
+  (add-to-list 'org-latex-classes
+               '("assignment"
+                 "\\documentclass[a4paper,12pt]{report}
+\\renewcommand{\\chaptername}{Lab}
+\\makeatletter
+\\renewcommand{\\maketitle}{
+  \\begin{titlepage}
+    \\begin{center}
+      \\vspace*{2em}
+      \\Huge \\textbf{ASSIGNMENT} \\\\
+      \\vspace{4em}
+      \\Huge \\textbf{\\@title} \\\\
+      \\vspace{4em}
+      \\Large \\textbf{\\@date} \\\\
+      \\bigskip
+      \\Large \\textbf{\\@author} \\\\
+      \\medskip
+      \\large 191112436, CSE-3 \\\\
+      \\bigskip
+      \\includegraphics[width=16em]{../../manit-logo.png} \\\\
+      \\bigskip
+      \\large Department of Computer Science \\\\
+      \\large MANIT, Bhopal \\\\
+    \\end{center}
+  \\end{titlepage}
+}
+\\makeatother
+\\usepackage[margin=0.7in]{geometry}"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+#+end_src
+
 Source code block formatting
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! org
