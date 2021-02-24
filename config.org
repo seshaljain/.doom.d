@@ -152,13 +152,10 @@ Source code block formatting
 #+END_SRC
 
 ** eglot
-#+BEGIN_SRC emacs-lisp :tangle no
-(package! eglot)
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! eglot
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd-10")))
+  (add-to-list 'eglot-server-programs
+               '((c++-mode c-mode) "clangd")))
 #+END_SRC
 
 ** doom-modeline
