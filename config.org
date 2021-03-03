@@ -155,3 +155,12 @@ Source code block formatting
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq! doom-modeline-icon nil)
 #+END_SRC
+
+** yasnippets
+#+BEGIN_SRC emacs-lisp
+;; disable Doom's snippets
+(package! doom-snippets :ignore t)
+
+;; enable Yasnippet default snippets
+(package! yasnippet-snippets)
+#+END_SRC
