@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: CPPMain
-# key: io
+# name: cpCPP
+# key: cp
 # --
 
 #include <bits/stdc++.h>
