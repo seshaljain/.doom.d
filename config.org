@@ -151,13 +151,6 @@ Source code block formatting
   (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 #+END_SRC
 
-** eglot
-#+BEGIN_SRC emacs-lisp :tangle yes
-(after! eglot
-  (add-to-list 'eglot-server-programs
-               '((c++-mode c-mode) "clangd")))
-#+END_SRC
-
 ** doom-modeline
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq! doom-modeline-icon nil)
