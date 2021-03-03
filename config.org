@@ -48,6 +48,7 @@ Relative line numbers in programming modes
 #+BEGIN_SRC emacs-lisp
 (setq split-width-threshold 120)
 #+END_SRC
+
 * Packages
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle packages.el :results silent
@@ -145,6 +146,7 @@ Source code block formatting
 (after! ivy
   (setq! ivy-height 10))
 #+END_SRC
+
 ** avy
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! avy
