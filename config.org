@@ -21,7 +21,7 @@ Make this file run (slightly) faster with lexical binding
 * Better Defaults
 ** Font
 #+BEGIN_SRC emacs-lisp
-(setq doom-font "Iosevka Term Curly 14"
+(setq doom-font "Iosevka Term Curly 13"
       doom-variable-pitch-font (font-spec :family "Inter" :size 16))
 #+END_SRC
 
