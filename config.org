@@ -140,6 +140,13 @@ Source code block formatting
                                     ("breakanywhere" "true"))))
 #+END_SRC
 
+*** Ditaa
+#+begin_src emacs-lisp
+(if (eq system-type 'gnu/linux)
+    (if (file-exists-p "~/bin/ditaa.jar")
+        (setq! org-ditaa-jar-path "~/bin/ditaa.jar") nil))
+#+end_src
+
 ** counsel
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! ivy
