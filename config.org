@@ -75,7 +75,7 @@ This file shouldn't be byte compiled
 (after! org
   (setq! org-capture-templates
          '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
-            "**** %^{Link}\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
+            "**** %l\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
            ("l" "Links" entry (file+olp+datetree "~/GithubLinks/README.org")
             "**** %^{Link}\n%?")
            ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
