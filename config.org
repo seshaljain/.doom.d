@@ -43,12 +43,6 @@ Set up =authinfo.gpg=
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 
-** Display line numbers
-Relative line numbers in programming modes
-#+BEGIN_SRC emacs-lisp
-(setq display-line-numbers-type 'relative)
-#+END_SRC
-
 ** Prefer vertical splits
 #+BEGIN_SRC emacs-lisp
 (setq split-width-threshold 120)
