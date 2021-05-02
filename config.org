@@ -18,6 +18,12 @@ Make this file run (slightly) faster with lexical binding
       user-mail-address "seshaljain11@gmail.com")
 #+END_SRC
 
+Set up =authinfo.gpg=
+#+begin_src emacs-lisp :tangle yes
+(setq auth-sources '("~/.authinfo.gpg")
+      auth-source-cache-expiry nil) ; default is 7200 (2h)
+#+end_src
+
 * Better Defaults
 ** Font
 #+BEGIN_SRC emacs-lisp
