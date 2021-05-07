@@ -76,9 +76,9 @@ This file shouldn't be byte compiled
   (setq! org-capture-templates
          '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
             "**** %l\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
-           ("c" "100 Days of Code Log" entry (file+olp+datetree "~/Git/100-days-of-code/R3.org")
-            "**** Day \#%? %u\n- "
-            :tree-type month))))
+           ("c" "100 Days of Code Log" item (file+olp+datetree "~/Git/100-days-of-code/R3.org")
+            "%x"
+            :unnarrowed t))))
 #+END_SRC
 
 *** Org Export
@@ -145,7 +145,6 @@ Source code block formatting
     (if (file-exists-p "~/bin/ditaa.jar")
         (setq! org-ditaa-jar-path "~/bin/ditaa.jar") nil))
 #+end_src
-
 ** counsel
 #+BEGIN_SRC emacs-lisp :tangle yes
 (after! ivy
