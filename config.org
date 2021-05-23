@@ -27,8 +27,8 @@ Set up =authinfo.gpg=
 * Better Defaults
 ** Font
 #+BEGIN_SRC emacs-lisp
-(setq doom-font "Iosevka Term Curly 13"
-      doom-variable-pitch-font (font-spec :family "Inter" :size 16))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold)
+       doom-variable-pitch-font (font-spec :family "Inter" :size 16))
 #+END_SRC
 
 ** Theme
