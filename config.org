@@ -197,3 +197,11 @@ Regards,\\\\
 Seshal Jain
 ,#+end_signature"))
 #+end_src
+
+** deft
+#+begin_src emacs-lisp :tangle yes
+(use-package! deft
+  :config
+  (setq! deft-directory (concat org-directory "/notes/dsa"))
+  (setq! deft-current-sort-method 'title))
+#+end_src
