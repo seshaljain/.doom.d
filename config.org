@@ -25,27 +25,33 @@ Set up =authinfo.gpg=
 #+end_src
 
 * Better Defaults
-** Font
+** UI
+Font
 #+BEGIN_SRC emacs-lisp
 (setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold)
        doom-variable-pitch-font (font-spec :family "Inter" :size 16))
 #+END_SRC
 
-** Theme
+Theme
 #+BEGIN_SRC emacs-lisp
 (setq doom-theme 'doom-dracula)
 #+END_SRC
 
-** Fullscreen
+Fullscreen
 #+BEGIN_SRC emacs-lisp
 (doom/set-frame-opacity 90)
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 
-** Prefer vertical splits
+Prefer vertical splits
 #+BEGIN_SRC emacs-lisp
 (setq split-width-threshold 120)
+#+END_SRC
+
+No icons in mode line
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq! doom-modeline-icon nil)
 #+END_SRC
 
 * Packages
@@ -64,27 +70,57 @@ This file shouldn't be byte compiled
 
 ** org
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! org
-  (setq!
-         org-edit-src-content-indentation 0
-         org-src-window-setup 'current-window))
+(use-package! org
+  :init
+  (setq! org-directory "~/Git/org")
+  :config
+  (setq! org-edit-src-content-indentation 0
+         org-src-window-setup 'current-window
+         org-log-done 'time
+         org-log-done-with-time nil
+         org-export-allow-bind-keywords t))
+
 #+END_SRC
+
+*** Org Agenda
+#+begin_src emacs-lisp :tangle yes
+(use-package! org
+  :config
+  (setq! org-agenda-files (list org-directory (concat org-directory "/projects") (concat org-directory "/gtd"))))
+#+end_src
 
 *** Org Capture
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! org
+(use-package! org
+  :config
   (setq! org-capture-templates
-         '(("x" "CP" entry (file+olp+datetree "~/Git/cp/cp.org")
-            "**** %l\n#+BEGIN_SRC cpp\n%?\n#+END_SRC")
-           ("c" "100 Days of Code Log" item (file+olp+datetree "~/Git/100-days-of-code/R3.org")
-            "%x"
-            :unnarrowed t))))
+         '(("c" "CP Log" entry (file+olp+datetree "~/Git/cp/cp.org")
+            "**** %l\n\n#+BEGIN_SRC cpp\n%?\n#+END_SRC"
+            :clock-in t)
+           ("s" "Code snippet" entry (file "~/Git/cp/snippets.org")
+            "* %?"
+            :empty-lines-before 2)
+           ("n" "Manual Laptop Setups")
+           ("ny" "Cryptography" plain
+            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 337 Cryptography")
+            "%?"
+            :unnarrowed t)
+           ("no" "Operating System" plain
+            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 312 Operating System")
+            "%?"
+            :unnarrowed t)
+           ("nc" "Compiler Design" plain
+            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 311 Compiler Design")
+            "%?"
+            :unnarrowed t)
+           )))
 #+END_SRC
 
 *** Org Export
 Syntax highlighting via =Minted=
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! org
+(use-package! org
+  :config
   (setq! org-latex-listings 'minted
          org-latex-packages-alist '(("" "minted"))
          org-latex-pdf-process
@@ -95,7 +131,8 @@ Syntax highlighting via =Minted=
 
 LaTeX class for college assignments
 #+begin_src emacs-lisp :tangle yes
-(after! ox-latex
+(use-package! ox-latex
+  :config
   (add-to-list 'org-latex-classes
                '("assignment"
                  "\\documentclass[a4paper,12pt]{report}
@@ -134,32 +171,34 @@ LaTeX class for college assignments
 
 Source code block formatting
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! org
+(use-package! org
+  :config
   (setq! org-latex-minted-options '(("breaklines" "true")
                                     ("breakanywhere" "true"))))
 #+END_SRC
 
-*** Ditaa
+*** ox-hugo
 #+begin_src emacs-lisp
-(if (eq system-type 'gnu/linux)
-    (if (file-exists-p "~/bin/ditaa.jar")
-        (setq! org-ditaa-jar-path "~/bin/ditaa.jar") nil))
+(package! ox-hugo)
 #+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(use-package! ox-hugo
+  :after ox)
+#+end_src
+
 ** counsel
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! ivy
+(use-package! ivy
+  :config
   (setq! ivy-height 10))
 #+END_SRC
 
 ** avy
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! avy
+(use-package! avy
+  :config
   (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
-#+END_SRC
-
-** doom-modeline
-#+BEGIN_SRC emacs-lisp :tangle yes
-(setq! doom-modeline-icon nil)
 #+END_SRC
 
 ** yasnippets
@@ -202,6 +241,6 @@ Seshal Jain
 #+begin_src emacs-lisp :tangle yes
 (use-package! deft
   :config
-  (setq! deft-directory (concat org-directory "/notes/dsa"))
+  (setq! deft-directory (concat org-directory "/notes"))
   (setq! deft-current-sort-method 'title))
 #+end_src
