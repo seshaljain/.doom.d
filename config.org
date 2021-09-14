@@ -122,12 +122,13 @@ Syntax highlighting via =Minted=
 (use-package! org
   :config
   (setq! org-latex-listings 'minted
-         org-latex-packages-alist '(("" "minted"))
+         org-latex-packages-alist '(("" "minted")
+                                    ("" "xcolor"))
          org-latex-pdf-process
-         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
-#+END_SRC
+         '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+           "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+        #+END_SRC
 
 LaTeX class for college assignments
 #+begin_src emacs-lisp :tangle yes
@@ -137,6 +138,7 @@ LaTeX class for college assignments
                '("assignment"
                  "\\documentclass[a4paper,12pt]{report}
 \\renewcommand{\\chaptername}{Lab}
+\\setlength{\\parindent}{0pt}
 \\makeatletter
 \\renewcommand{\\maketitle}{
   \\begin{titlepage}
@@ -160,7 +162,8 @@ LaTeX class for college assignments
   \\end{titlepage}
 }
 \\makeatother
-\\usepackage[margin=0.7in]{geometry}"
+\\usepackage[margin=0.7in]{geometry}
+\\usepackage{inconsolata}"
                  ("\\chapter{%s}" . "\\chapter*{%s}")
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -174,7 +177,9 @@ Source code block formatting
 (use-package! org
   :config
   (setq! org-latex-minted-options '(("breaklines" "true")
-                                    ("breakanywhere" "true"))))
+                                    ("breakanywhere" "true")
+                                    ("style" "solarized-light")
+                                    ("bgcolor" "solarized-bg"))))
 #+END_SRC
 
 *** ox-hugo
