@@ -205,6 +205,11 @@ Source code block formatting
   :config
   (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 #+END_SRC
+** company
+#+begin_src emacs-lisp :tangle yes
+(after! js2-mode
+  (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
+#+end_src
 
 ** yasnippets
 #+BEGIN_SRC emacs-lisp
