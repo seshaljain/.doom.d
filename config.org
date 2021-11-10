@@ -28,8 +28,8 @@ Set up =authinfo.gpg=
 ** UI
 Font
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold)
-       doom-variable-pitch-font (font-spec :family "Inter" :size 16))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 14 :weight 'semi-bold)
+       doom-variable-pitch-font (font-spec :family "Inter" :size 14))
 #+END_SRC
 
 Theme
@@ -39,7 +39,6 @@ Theme
 
 Fullscreen
 #+BEGIN_SRC emacs-lisp
-(doom/set-frame-opacity 90)
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
@@ -72,7 +71,7 @@ This file shouldn't be byte compiled
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! org
   :init
-  (setq! org-directory "~/Git/org")
+  (setq! org-directory "~/Documents/Org")
   :config
   (setq! org-edit-src-content-indentation 0
          org-src-window-setup 'current-window
@@ -100,19 +99,6 @@ This file shouldn't be byte compiled
            ("s" "Code snippet" entry (file "~/Git/cp/snippets.org")
             "* %?"
             :empty-lines-before 2)
-           ("n" "Manual Laptop Setups")
-           ("ny" "Cryptography" plain
-            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 337 Cryptography")
-            "%?"
-            :unnarrowed t)
-           ("no" "Operating System" plain
-            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 312 Operating System")
-            "%?"
-            :unnarrowed t)
-           ("nc" "Compiler Design" plain
-            (file+olp+datetree "~/Documents/MANIT/Semester 5/Notes.org" "CSE 311 Compiler Design")
-            "%?"
-            :unnarrowed t)
            )))
 #+END_SRC
 
@@ -192,7 +178,7 @@ Source code block formatting
   :after ox)
 #+end_src
 
-** counsel
+** COMMENT counsel
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! ivy
   :config
@@ -205,6 +191,7 @@ Source code block formatting
   :config
   (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 #+END_SRC
+
 ** company
 #+begin_src emacs-lisp :tangle yes
 (after! js2-mode
@@ -237,20 +224,13 @@ Source code block formatting
   (setq smtpmail-smtp-server "smtp.gmail.com")
   (setq smtpmail-smtp-service 465)
   (setq smtpmail-stream-type 'ssl))
-
-(use-package! org-msg
-  :config
-  (setq org-msg-signature "
-,#+begin_signature
-Regards,\\\\
-Seshal Jain
-,#+end_signature"))
 #+end_src
 
-** deft
+** Tailwind Intellisense
+#+begin_src emacs-lisp
+(package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
+#+end_src
+
 #+begin_src emacs-lisp :tangle yes
-(use-package! deft
-  :config
-  (setq! deft-directory (concat org-directory "/notes"))
-  (setq! deft-current-sort-method 'title))
+(use-package! lsp-tailwindcss)
 #+end_src
