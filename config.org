@@ -28,8 +28,7 @@ Set up =authinfo.gpg=
 ** UI
 Font
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold)
-       doom-variable-pitch-font (font-spec :family "Inter" :size 16))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold))
 #+END_SRC
 
 Theme
@@ -226,4 +225,13 @@ Source code block formatting
   :config
   (setq! deft-directory (concat org-directory "/notes"))
   (setq! deft-current-sort-method 'title))
+#+end_src
+
+** Tailwind Intellisense
+#+begin_src emacs-lisp
+(package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(use-package! lsp-tailwindcss)
 #+end_src
