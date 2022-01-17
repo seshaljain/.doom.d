@@ -206,25 +206,6 @@ Source code block formatting
 (package! yasnippet-snippets)
 #+END_SRC
 
-** mu4e
-#+begin_src emacs-lisp :tangle yes
-(use-package! mu4e
-  :config
-  ;; Refresh mail using isync every 10 minutes
-  (setq mu4e-update-interval (* 10 60))
-  (setq mu4e-maildir "~/.mail")
-
-  (setq mu4e-drafts-folder "/[Gmail]/Drafts")
-  (setq mu4e-sent-folder   "/[Gmail]/Sent Mail")
-  (setq mu4e-refile-folder "/[Gmail]/All Mail")
-  (setq mu4e-trash-folder  "/[Gmail]/Trash")
-  (setq mu4e-use-fancy-chars nil)
-
-  (setq smtpmail-smtp-server "smtp.gmail.com")
-  (setq smtpmail-smtp-service 465)
-  (setq smtpmail-stream-type 'ssl))
-#+end_src
-
 ** Tailwind Intellisense
 #+begin_src emacs-lisp
 (package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
