@@ -206,8 +206,8 @@ Source code block formatting
   :config
   (setq! org-latex-minted-options '(("breaklines" "true")
                                     ("breakanywhere" "true")
-                                    ("style" "solarized-light")
-                                    ("bgcolor" "solarized-bg"))))
+                                    ("style" "manni")
+                                    ("frame" "lines")))
 #+END_SRC
 
 *** ox-hugo
@@ -219,8 +219,7 @@ Source code block formatting
 (use-package! ox-hugo
   :after ox)
 #+end_src
-
-** COMMENT counsel
+** counsel
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! ivy
   :config
@@ -255,5 +254,7 @@ Source code block formatting
 #+end_src
 
 #+begin_src emacs-lisp :tangle yes
-(use-package! lsp-tailwindcss)
+(use-package! lsp-tailwindcss
+  :init
+  (setq! lsp-tailwindcss-add-on-mode t))
 #+end_src
