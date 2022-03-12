@@ -210,7 +210,7 @@ Source code block formatting
   (setq! org-latex-minted-options '(("breaklines" "true")
                                     ("breakanywhere" "true")
                                     ("style" "manni")
-                                    ("frame" "lines")))
+                                    ("frame" "lines"))))
 #+END_SRC
 
 *** ox-hugo
