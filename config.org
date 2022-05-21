@@ -33,7 +33,7 @@ Font
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-dracula)
+(setq doom-theme 'doom-vibrant)
 #+END_SRC
 
 Fullscreen
@@ -79,49 +79,6 @@ This file shouldn't be byte compiled
          org-export-allow-bind-keywords t))
 
 #+END_SRC
-
-*** Org Roam
-#+begin_src emacs-lisp
-(unpin! org-roam)
-(package! org-roam-ui)
-#+end_src
-
-#+begin_src emacs-lisp :tangle yes
-(use-package! org-roam-ui
-    :after org-roam
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
-
-(use-package! websocket
-    :after org-roam)
-#+end_src
-
-#+begin_src emacs-lisp :tangle yes
-(use-package! org-roam
-  :config
-  (setq! org-roam-directory (concat org-directory "/roam"))
-  (setq! org-roam-capture-templates
-         '(("c" "Code entry")
-           ("cd" "DSA" entry
-            "\n* TODO ${title}\n:PROPERTIES:\n:EXPORT_FILE_NAME: ${slug}\n:END:\n\n#+begin_src cpp\n%c\n#+end_src\n"
-            :if-new (file "dsa.org")
-            :empty-lines 1)
-           ("cf" "CodeForces" entry
-            "\n* TODO %?\n\n#+begin_src cpp\n%c\n#+end_src\n"
-            :if-new (file "codeforces.org")
-            :empty-lines 1)
-           ("cs" "CSES" entry
-            "\n* TODO %?\n\n#+begin_src cpp\n%c\n#+end_src\n"
-            :if-new (file "cses.org")
-            :empty-lines 1)
-           ("d" "default" plain
-            "%?"
-            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-            :unnarrowed t))))
-#+end_src
 
 *** Org Agenda
 #+begin_src emacs-lisp :tangle yes
@@ -222,12 +179,6 @@ Source code block formatting
 (use-package! ox-hugo
   :after ox)
 #+end_src
-** counsel
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package! ivy
-  :config
-  (setq! ivy-height 10))
-#+END_SRC
 
 ** avy
 #+BEGIN_SRC emacs-lisp :tangle yes
