@@ -88,6 +88,7 @@ This file shouldn't be byte compiled
 #+end_src
 
 *** Org Capture
+Capture templates for quick notetaking
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! org
   :config
@@ -170,17 +171,8 @@ Source code block formatting
                                     ("frame" "lines"))))
 #+END_SRC
 
-*** ox-hugo
-#+begin_src emacs-lisp
-(package! ox-hugo)
-#+end_src
-
-#+begin_src emacs-lisp :tangle yes
-(use-package! ox-hugo
-  :after ox)
-#+end_src
-
 ** avy
+Use Dvorak home row instead of Qwerty-default for avy navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! avy
   :config
@@ -188,12 +180,14 @@ Source code block formatting
 #+END_SRC
 
 ** company
+Enable company completions in JS
 #+begin_src emacs-lisp :tangle yes
 (after! js2-mode
   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
 #+end_src
 
 ** yasnippets
+YaSnippets > Doom Snippets
 #+BEGIN_SRC emacs-lisp
 ;; disable Doom's snippets
 (package! doom-snippets :ignore t)
@@ -203,6 +197,7 @@ Source code block formatting
 #+END_SRC
 
 ** Tailwind Intellisense
+TODO: Tailwind Intellisense does not work
 #+begin_src emacs-lisp
 (package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
 #+end_src
