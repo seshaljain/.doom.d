@@ -176,7 +176,7 @@ Use Dvorak home row instead of Qwerty-default for avy navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! avy
   :config
-  (setq! avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
+  (setq! avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s)))
 #+END_SRC
 
 ** company
@@ -196,14 +196,3 @@ YaSnippets > Doom Snippets
 (package! yasnippet-snippets)
 #+END_SRC
 
-** Tailwind Intellisense
-TODO: Tailwind Intellisense does not work
-#+begin_src emacs-lisp
-(package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle yes
-(use-package! lsp-tailwindcss
-  :init
-  (setq! lsp-tailwindcss-add-on-mode t))
-#+end_src
