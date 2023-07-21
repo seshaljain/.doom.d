@@ -28,12 +28,12 @@ Set up =authinfo.gpg=
 ** UI
 Font
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 16 :weight 'semi-bold))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 24 :weight 'semi-bold))
 #+END_SRC
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-one)
 #+END_SRC
 
 Fullscreen
