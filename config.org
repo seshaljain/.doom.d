@@ -33,7 +33,7 @@ Font
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-xcode)
+(setq doom-theme 'doom-dracula)
 #+END_SRC
 
 Fullscreen
@@ -93,9 +93,10 @@ Capture templates for quick notetaking
 (use-package! org
   :config
   (setq! org-capture-templates
-         '(("c" "CP Log" entry (file+olp+datetree "~/Git/cp/cp.org")
-            "**** %l\n\n#+BEGIN_SRC cpp\n%?\n#+END_SRC"
-            :clock-in t)
+         '(("l" "Log" plain (file+olp+datetree "~/Documents/Org/roam/work-log.org")
+            "%?"
+            :prepend t
+            :unnarrowed t)
            ("s" "Code snippet" entry (file "~/Git/cp/snippets.org")
             "* %?"
             :empty-lines-before 2)
@@ -171,6 +172,30 @@ Source code block formatting
                                     ("frame" "lines"))))
 #+END_SRC
 
+
+** Org Roam
+#+begin_src emacs-lisp
+(unpin! org-roam)
+(package! org-roam-ui)
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+ (use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+#+end_src
+
 ** avy
 Use Dvorak home row instead of Qwerty-default for avy navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -185,14 +210,3 @@ Enable company completions in JS
 (after! js2-mode
   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
 #+end_src
-
-** yasnippets
-YaSnippets > Doom Snippets
-#+BEGIN_SRC emacs-lisp
-;; disable Doom's snippets
-(package! doom-snippets :ignore t)
-
-;; enable Yasnippet default snippets
-(package! yasnippet-snippets)
-#+END_SRC
-
