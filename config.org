@@ -33,7 +33,7 @@ Font
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-dracula)
+(setq doom-theme 'doom-solarized-light)
 #+END_SRC
 
 Fullscreen
@@ -84,7 +84,7 @@ This file shouldn't be byte compiled
 #+begin_src emacs-lisp :tangle yes
 (use-package! org
   :config
-  (setq! org-agenda-files (list org-directory (concat org-directory "/roam") (concat org-directory "/gtd"))))
+  (setq! org-agenda-files (list org-directory (concat org-directory "/roam"))))
 #+end_src
 
 *** Org Capture
@@ -95,7 +95,6 @@ Capture templates for quick notetaking
   (setq! org-capture-templates
          '(("l" "Log" plain (file+olp+datetree "~/Documents/Org/roam/work-log.org")
             "%?"
-            :prepend t
             :unnarrowed t)
            ("s" "Code snippet" entry (file "~/Git/cp/snippets.org")
             "* %?"
