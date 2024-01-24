@@ -67,6 +67,11 @@ This file shouldn't be byte compiled
 #+end_src
 
 ** org
+#+BEGIN_SRC emacs-lisp
+;; fix org roam bug as of 8/8/23
+(package! org :pin "ca873f7")
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! org
   :init
@@ -93,14 +98,26 @@ Capture templates for quick notetaking
 (use-package! org
   :config
   (setq! org-capture-templates
-         '(("l" "Log" plain (file+olp+datetree "~/Documents/Org/roam/work-log.org")
-            "%?"
-            :unnarrowed t)
-           ("s" "Code snippet" entry (file "~/Git/cp/snippets.org")
+         '(("d" "DRI" entry
+            (file+olp+datetree "~/Documents/Org/roam/dri.org")
             "* %?"
-            :empty-lines-before 2)
-           )))
+            :unnarrowed t))))
 #+END_SRC
+**** Org Roam Capture
+#+begin_src emacs-lisp :tangle yes
+(use-package org-roam
+  :config (setq! org-roam-capture-templates
+                 '(("l" "Log" item "- %u %?"
+                    :target (file+olp "log.org" ("Log"))
+                    :unnarrowed t
+                    :prepend t)
+                   ("w" "Work Item" plain "\n* Log\n\n* Summary\n%?\n\n* Resources"
+                    :if-new (file+head "workitem/${slug}/%<%Y_%m_%d>_${slug}.org" "#+title: ${title}\n#+export_file_name: ${slug}\n#+options: num:nil toc:nil")
+                    :unnarrowed t)
+                   ("d" "default" plain "%?"
+                    :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                    :unnarrowed t))))
+#+end_src
 
 *** Org Export
 Syntax highlighting via =Minted=
