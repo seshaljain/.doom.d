@@ -69,7 +69,7 @@ This file shouldn't be byte compiled
 ** org
 #+BEGIN_SRC emacs-lisp
 ;; fix org roam bug as of 8/8/23
-(package! org :pin "ca873f7")
+(package! org :pin "9.6.1")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -95,13 +95,26 @@ This file shouldn't be byte compiled
 *** Org Capture
 Capture templates for quick notetaking
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package! org
-  :config
-  (setq! org-capture-templates
-         '(("d" "DRI" entry
-            (file+olp+datetree "~/Documents/Org/roam/dri.org")
-            "* %?"
-            :unnarrowed t))))
+(after! org
+  (defun my/add-journal-metadata ()
+    "Get the date for org-capture in the format YYYY-MM-DD."
+    (let ((datestamp (org-capture-get :date)))
+      (org-entry-put nil "EXPORT_FILE_NAME" (format-time-string "%Y-%m-%d" datestamp))
+      (org-entry-put nil "EXPORT_DATE" (format-time-string "%Y-%m-%d" datestamp)))))
+
+  (use-package! org
+    :config
+    (setq org-capture-templates
+          '(("d" "DRI" entry
+             (file+olp+datetree "~/Documents/Org/roam/dri.org")
+             "* %?"
+             :unnarrowed t)
+            ("j" "Journal" plain
+             (file+olp+datetree "~/Documents/journal/org/journal.org")
+             "%?"
+             :unnarrowed t
+             :jump-to-captured t
+             :before-finalize my/add-journal-metadata))))
 #+END_SRC
 **** Org Roam Capture
 #+begin_src emacs-lisp :tangle yes
