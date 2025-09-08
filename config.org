@@ -67,11 +67,6 @@ This file shouldn't be byte compiled
 #+end_src
 
 ** org
-#+BEGIN_SRC emacs-lisp
-;; fix org roam bug as of 8/8/23
-(package! org :pin "9.6.1")
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package! org
   :init
@@ -80,9 +75,7 @@ This file shouldn't be byte compiled
   (setq! org-edit-src-content-indentation 0
          org-src-window-setup 'current-window
          org-log-done 'time
-         org-log-done-with-time nil
-         org-export-allow-bind-keywords t))
-
+         org-log-done-with-time nil))
 #+END_SRC
 
 *** Org Agenda
@@ -118,7 +111,8 @@ Capture templates for quick notetaking
 #+END_SRC
 **** Org Roam Capture
 #+begin_src emacs-lisp :tangle yes
-(use-package org-roam
+(use-package! org-roam
+  :after org
   :config (setq! org-roam-capture-templates
                  '(("l" "Log" item "- %u %?"
                     :target (file+olp "log.org" ("Log"))
@@ -204,7 +198,6 @@ Source code block formatting
 
 ** Org Roam
 #+begin_src emacs-lisp
-(unpin! org-roam)
 (package! org-roam-ui)
 #+end_src
 
