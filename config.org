@@ -82,7 +82,9 @@ This file shouldn't be byte compiled
 #+begin_src emacs-lisp :tangle yes
 (use-package! org
   :config
-  (setq! org-agenda-files (list org-directory (concat org-directory "/roam"))))
+  (setq! org-agenda-files (list org-directory
+                                (concat org-directory "/roam")
+                                (concat org-directory "/dsa"))))
 #+end_src
 
 *** Org Capture
@@ -98,32 +100,65 @@ Capture templates for quick notetaking
   (use-package! org
     :config
     (setq org-capture-templates
-          '(("d" "DRI" entry
-             (file+olp+datetree "~/Documents/Org/roam/dri.org")
-             "* %?"
-             :unnarrowed t)
+          '(
             ("j" "Journal" plain
-             (file+olp+datetree "~/Documents/journal/org/journal.org")
+             (file+olp+datetree (concat org-directory "/journal"))
              "%?"
              :unnarrowed t
              :jump-to-captured t
              :before-finalize my/add-journal-metadata))))
 #+END_SRC
-**** Org Roam Capture
+*** Org Roam
 #+begin_src emacs-lisp :tangle yes
 (use-package! org-roam
   :after org
-  :config (setq! org-roam-capture-templates
-                 '(("l" "Log" item "- %u %?"
-                    :target (file+olp "log.org" ("Log"))
-                    :unnarrowed t
-                    :prepend t)
-                   ("w" "Work Item" plain "\n* Log\n\n* Summary\n%?\n\n* Resources"
-                    :if-new (file+head "workitem/${slug}/%<%Y_%m_%d>_${slug}.org" "#+title: ${title}\n#+export_file_name: ${slug}\n#+options: num:nil toc:nil")
-                    :unnarrowed t)
-                   ("d" "default" plain "%?"
+  :config
+  (setq! org-roam-directory (concat org-directory "/roam"))
+  (setq! org-roam-capture-templates
+                 '(("d" "default" plain "%?"
                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                    :unnarrowed t)
+                   ("p" "DSA Practice" plain 
+                    "* Attempt %<%Y-%m-%d %H:%M>\n:PROPERTIES:\n:DATE: %U\n:DIFFICULTY: \n:TIME_TAKEN: \n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
+                    :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n")
                     :unnarrowed t))))
+#+end_src
+
+**** DSA Practice System
+#+begin_src emacs-lisp :tangle yes
+(defun my/dsa-practice-capture ()
+  "Capture DSA practice session from current org heading."
+  (interactive)
+  (when (derived-mode-p 'org-mode)
+    (let* ((heading (org-get-heading t t t t))
+           (id (org-id-get-create))
+           (link (org-store-link nil)))
+      (org-roam-capture- :keys "p" 
+                        :node (org-roam-node-create :title heading)
+                        :props (list :immediate-finish nil)))))
+
+(defun my/dsa-update-last-reviewed ()
+  "Update the LAST_REVIEWED property of current heading."
+  (interactive)
+  (org-set-property "LAST_REVIEWED" (format-time-string "%Y-%m-%d"))
+  (let ((attempts (or (org-entry-get nil "ATTEMPTS") "0")))
+    (org-set-property "ATTEMPTS" (number-to-string (1+ (string-to-number attempts))))))
+
+(defun my/dsa-mark-difficulty (level)
+  "Mark difficulty level and schedule appropriate review interval."
+  (interactive (list (completing-read "Difficulty (1=Easy, 5=Hard): " 
+                                     '("1" "2" "3" "4" "5"))))
+  (org-set-property "DIFFICULTY" level)
+  (my/dsa-update-last-reviewed)
+  (org-todo "RWD"))
+
+;; Keybindings
+(map! :after org
+      :map org-mode-map
+      :localleader
+      (:prefix ("p" . "DSA Practice")
+       "p" #'my/dsa-practice-capture
+       "d" #'my/dsa-mark-difficulty))
 #+end_src
 
 *** Org Export
@@ -196,28 +231,6 @@ Source code block formatting
 #+END_SRC
 
 
-** Org Roam
-#+begin_src emacs-lisp
-(package! org-roam-ui)
-#+end_src
-
-#+begin_src emacs-lisp :tangle yes
- (use-package! websocket
-    :after org-roam)
-
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
-#+end_src
-
 ** avy
 Use Dvorak home row instead of Qwerty-default for avy navigation
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -231,4 +244,12 @@ Enable company completions in JS
 #+begin_src emacs-lisp :tangle yes
 (after! js2-mode
   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
+#+end_src
+
+** evil
+Interim solution for Emacs launch error
+https://github.com/doomemacs/doomemacs/issues/8203
+#+begin_src emacs-lisp :tangle yes
+(after! evil
+  (define-key doom-leader-map (general--kbd "w") evil-window-map))
 #+end_src
