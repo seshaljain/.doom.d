@@ -84,7 +84,77 @@ This file shouldn't be byte compiled
   :config
   (setq! org-agenda-files (list org-directory
                                 (concat org-directory "/roam")
-                                (concat org-directory "/dsa"))))
+                                (concat org-directory "/dsa")))
+
+  ;; DSA Practice Agenda Commands - Category-based filtering
+  (setq! org-agenda-custom-commands
+         '(("d" . "DSA Practice by Category")
+           ("da" "Array Problems" tags-todo "array"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🔢 Array Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("ds" "String Problems" tags-todo "string"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🔤 String Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dl" "Linked List Problems" tags-todo "ll"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🔗 Linked List Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dt" "Tree Problems" tags-todo "bt"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🌲 Binary Tree Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dp" "Dynamic Programming" tags-todo "dp"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🧮 Dynamic Programming Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dm" "Matrix Problems" tags-todo "matrix"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "📊 Matrix Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dh" "Heap Problems" tags-todo "heap"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "⛰️ Heap Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dg" "Greedy Problems" tags-todo "greedy"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "💰 Greedy Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("db" "Backtracking Problems" tags-todo "backtracking"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "↩️ Backtracking Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dr" "Search & Sort Problems" tags-todo "search_sort"
+            ((org-agenda-files (list (concat org-directory "/dsa")))
+             (org-agenda-overriding-header "🔍 Search & Sort Problems (TODO)")
+             (org-agenda-todo-keyword-format "")
+             (org-agenda-max-entries 5)))
+           ("dx" "Mixed Daily Practice"
+            ((tags-todo "array" ((org-agenda-files (list (concat org-directory "/dsa")))
+                                (org-agenda-overriding-header "🔢 Arrays")
+                                (org-agenda-max-entries 1)))
+             (tags-todo "string" ((org-agenda-files (list (concat org-directory "/dsa")))
+                                 (org-agenda-overriding-header "🔤 Strings")
+                                 (org-agenda-max-entries 1)))
+             (tags-todo "ll" ((org-agenda-files (list (concat org-directory "/dsa")))
+                             (org-agenda-overriding-header "🔗 Linked Lists")
+                             (org-agenda-max-entries 1)))
+             (tags-todo "bt" ((org-agenda-files (list (concat org-directory "/dsa")))
+                             (org-agenda-overriding-header "🌲 Trees")
+                             (org-agenda-max-entries 1)))
+             (tags-todo "dp" ((org-agenda-files (list (concat org-directory "/dsa")))
+                             (org-agenda-overriding-header "🧮 DP")
+                             (org-agenda-max-entries 1))))))))
 #+end_src
 
 *** Org Capture
@@ -118,9 +188,9 @@ Capture templates for quick notetaking
                  '(("d" "default" plain "%?"
                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                     :unnarrowed t)
-                   ("p" "DSA Practice" plain 
-                    "* Attempt %<%Y-%m-%d %H:%M>\n:PROPERTIES:\n:DATE: %U\n:DIFFICULTY: \n:TIME_TAKEN: \n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
-                    :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n")
+                   ("p" "DSA Practice" plain
+                    "* Attempt %<%Y-%m-%d %H:%M>\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
+                    :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
                     :unnarrowed t))))
 #+end_src
 
@@ -133,7 +203,7 @@ Capture templates for quick notetaking
     (let* ((heading (org-get-heading t t t t))
            (id (org-id-get-create))
            (link (org-store-link nil)))
-      (org-roam-capture- :keys "p" 
+      (org-roam-capture- :keys "p"
                         :node (org-roam-node-create :title heading)
                         :props (list :immediate-finish nil)))))
 
@@ -146,11 +216,39 @@ Capture templates for quick notetaking
 
 (defun my/dsa-mark-difficulty (level)
   "Mark difficulty level and schedule appropriate review interval."
-  (interactive (list (completing-read "Difficulty (1=Easy, 5=Hard): " 
+  (interactive (list (completing-read "Difficulty (1=Easy, 5=Hard): "
                                      '("1" "2" "3" "4" "5"))))
   (org-set-property "DIFFICULTY" level)
   (my/dsa-update-last-reviewed)
   (org-todo "RWD"))
+
+;; Quick DSA practice function
+(defun my/dsa-practice-menu ()
+  "Quick access to DSA practice categories."
+  (interactive)
+  (let ((choice (completing-read "Choose category: "
+                                '(("Arrays" . "da")
+                                  ("Strings" . "ds")
+                                  ("Linked Lists" . "dl")
+                                  ("Trees" . "dt")
+                                  ("Dynamic Programming" . "dp")
+                                  ("Matrix" . "dm")
+                                  ("Heap" . "dh")
+                                  ("Greedy" . "dg")
+                                  ("Backtracking" . "db")
+                                  ("Search & Sort" . "dr")
+                                  ("Mixed Practice" . "dx")))))
+    (org-agenda nil (cdr (assoc choice '(("Arrays" . "da")
+                                        ("Strings" . "ds")
+                                        ("Linked Lists" . "dl")
+                                        ("Trees" . "dt")
+                                        ("Dynamic Programming" . "dp")
+                                        ("Matrix" . "dm")
+                                        ("Heap" . "dh")
+                                        ("Greedy" . "dg")
+                                        ("Backtracking" . "db")
+                                        ("Search & Sort" . "dr")
+                                        ("Mixed Practice" . "dx")))))))
 
 ;; Keybindings
 (map! :after org
@@ -158,7 +256,13 @@ Capture templates for quick notetaking
       :localleader
       (:prefix ("p" . "DSA Practice")
        "p" #'my/dsa-practice-capture
-       "d" #'my/dsa-mark-difficulty))
+       "d" #'my/dsa-mark-difficulty
+       "m" #'my/dsa-practice-menu))
+
+;; Global keybinding for quick DSA practice
+(map! :leader
+      (:prefix ("n" . "notes")
+       "d" #'my/dsa-practice-menu))
 #+end_src
 
 *** Org Export
