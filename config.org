@@ -28,12 +28,12 @@ Set up =authinfo.gpg=
 ** UI
 Font
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 24 :weight 'semi-bold))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 20 :weight 'semi-bold))
 #+END_SRC
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-solarized-light)
+(setq doom-theme 'doom-gruvbox)
 #+END_SRC
 
 Fullscreen
@@ -142,41 +142,33 @@ This file shouldn't be byte compiled
            ("dx" "Mixed Daily Practice"
             ((tags-todo "array" ((org-agenda-files (list (concat org-directory "/dsa")))
                                 (org-agenda-overriding-header "🔢 Arrays")
-                                (org-agenda-max-entries 1)))
+                                (org-agenda-max-entries 3)))
              (tags-todo "string" ((org-agenda-files (list (concat org-directory "/dsa")))
                                  (org-agenda-overriding-header "🔤 Strings")
-                                 (org-agenda-max-entries 1)))
+                                 (org-agenda-max-entries 3)))
              (tags-todo "ll" ((org-agenda-files (list (concat org-directory "/dsa")))
                              (org-agenda-overriding-header "🔗 Linked Lists")
-                             (org-agenda-max-entries 1)))
+                             (org-agenda-max-entries 3)))
              (tags-todo "bt" ((org-agenda-files (list (concat org-directory "/dsa")))
                              (org-agenda-overriding-header "🌲 Trees")
-                             (org-agenda-max-entries 1)))
+                             (org-agenda-max-entries 3)))
              (tags-todo "dp" ((org-agenda-files (list (concat org-directory "/dsa")))
                              (org-agenda-overriding-header "🧮 DP")
-                             (org-agenda-max-entries 1))))))))
+                             (org-agenda-max-entries 3))))))))
 #+end_src
 
 *** Org Capture
 Capture templates for quick notetaking
 #+BEGIN_SRC emacs-lisp :tangle yes
-(after! org
-  (defun my/add-journal-metadata ()
-    "Get the date for org-capture in the format YYYY-MM-DD."
-    (let ((datestamp (org-capture-get :date)))
-      (org-entry-put nil "EXPORT_FILE_NAME" (format-time-string "%Y-%m-%d" datestamp))
-      (org-entry-put nil "EXPORT_DATE" (format-time-string "%Y-%m-%d" datestamp)))))
-
-  (use-package! org
-    :config
-    (setq org-capture-templates
-          '(
-            ("j" "Journal" plain
-             (file+olp+datetree (concat org-directory "/journal"))
-             "%?"
-             :unnarrowed t
-             :jump-to-captured t
-             :before-finalize my/add-journal-metadata))))
+(use-package! org
+:config
+(setq! org-capture-templates
+        '(
+        ("j" "Journal" plain
+        (file+olp+datetree (expand-file-name "journal/journal.org" org-directory))
+        "%?"
+        :unnarrowed t
+        :jump-to-captured t))))
 #+END_SRC
 *** Org Roam
 #+begin_src emacs-lisp :tangle yes
@@ -189,7 +181,7 @@ Capture templates for quick notetaking
                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                     :unnarrowed t)
                    ("p" "DSA Practice" plain
-                    "* Attempt %<%Y-%m-%d %H:%M>\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
+                    "* Attempt %U\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
                     :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
                     :unnarrowed t))))
 #+end_src
