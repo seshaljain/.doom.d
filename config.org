@@ -28,12 +28,12 @@ Set up =authinfo.gpg=
 ** UI
 Font
 #+BEGIN_SRC emacs-lisp
-(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 20 :weight 'semi-bold))
+(setq! doom-font (font-spec :family "Iosevka Term Curly" :size 24 :weight 'semi-bold))
 #+END_SRC
 
 Theme
 #+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-solarized-light)
 #+END_SRC
 
 Fullscreen
@@ -82,179 +82,94 @@ This file shouldn't be byte compiled
 #+begin_src emacs-lisp :tangle yes
 (use-package! org
   :config
-  (setq! org-agenda-files (list org-directory
-                                (concat org-directory "/roam")
-                                (concat org-directory "/dsa")))
-
-  ;; DSA Practice Agenda Commands - Category-based filtering
-  (setq! org-agenda-custom-commands
-         '(("d" . "DSA Practice by Category")
-           ("da" "Array Problems" tags-todo "array"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🔢 Array Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("ds" "String Problems" tags-todo "string"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🔤 String Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dl" "Linked List Problems" tags-todo "ll"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🔗 Linked List Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dt" "Tree Problems" tags-todo "bt"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🌲 Binary Tree Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dp" "Dynamic Programming" tags-todo "dp"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🧮 Dynamic Programming Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dm" "Matrix Problems" tags-todo "matrix"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "📊 Matrix Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dh" "Heap Problems" tags-todo "heap"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "⛰️ Heap Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dg" "Greedy Problems" tags-todo "greedy"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "💰 Greedy Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("db" "Backtracking Problems" tags-todo "backtracking"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "↩️ Backtracking Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dr" "Search & Sort Problems" tags-todo "search_sort"
-            ((org-agenda-files (list (concat org-directory "/dsa")))
-             (org-agenda-overriding-header "🔍 Search & Sort Problems (TODO)")
-             (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
-           ("dx" "Mixed Daily Practice"
-            ((tags-todo "array" ((org-agenda-files (list (concat org-directory "/dsa")))
-                                (org-agenda-overriding-header "🔢 Arrays")
-                                (org-agenda-max-entries 3)))
-             (tags-todo "string" ((org-agenda-files (list (concat org-directory "/dsa")))
-                                 (org-agenda-overriding-header "🔤 Strings")
-                                 (org-agenda-max-entries 3)))
-             (tags-todo "ll" ((org-agenda-files (list (concat org-directory "/dsa")))
-                             (org-agenda-overriding-header "🔗 Linked Lists")
-                             (org-agenda-max-entries 3)))
-             (tags-todo "bt" ((org-agenda-files (list (concat org-directory "/dsa")))
-                             (org-agenda-overriding-header "🌲 Trees")
-                             (org-agenda-max-entries 3)))
-             (tags-todo "dp" ((org-agenda-files (list (concat org-directory "/dsa")))
-                             (org-agenda-overriding-header "🧮 DP")
-                             (org-agenda-max-entries 3))))))))
+  (setq! org-agenda-files (list org-directory (concat org-directory "/roam")))))
 #+end_src
 
 *** Org Capture
 Capture templates for quick notetaking
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package! org
-:config
-(setq! org-capture-templates
-        '(
-        ("j" "Journal" plain
-        (file+olp+datetree (expand-file-name "journal/journal.org" org-directory))
-        "%?"
-        :unnarrowed t
-        :jump-to-captured t))))
+(after! org
+  (defun my/add-journal-metadata ()
+    "Get the date for org-capture in the format YYYY-MM-DD."
+    (let ((datestamp (org-capture-get :date)))
+      (org-entry-put nil "EXPORT_FILE_NAME" (format-time-string "%Y-%m-%d" datestamp))
+      (org-entry-put nil "EXPORT_DATE" (format-time-string "%Y-%m-%d" datestamp)))))
+
+  (use-package! org
+    :config
+
+;; Org-roam base
+(setq! org-roam-directory (file-truename "~/org/"))
+(org-roam-db-autosync-mode 1)
+
+;; Optional: agenda + logging (keeps state/clock logs in a drawer)
+(setq! org-agenda-files '("~/org/dsa"))
+(setq! org-log-into-drawer t)
+(setq! org-todo-keywords
+      '((sequence "TODO(t)" "IN-PROGRESS(i!)" "REVIEW(r!)" "|" "DONE(d!)" "SKIP(k)")))
+
+;; Org-roam capture templates (no timestamps in filenames; slug-only)
+(setq! org-roam-capture-templates
+      '(
+        ;; Question (no Problem or Tests; C++ only)
+        ("q" "Question" plain
+         "%?"
+         :if-new (file+head "questions/${slug}.org"
+                            "#+title: ${title}\n\
+,#+filetags: :%^G:%^{difficulty|easy|medium|hard}:cpp:\n\
+,#+roam_alias: %^{Aliases (optional)|}\n\
+,#+roam_refs: %^{Reference URL (optional)}\n\
+\n* TODO Practice ${title}\n:LOGBOOK:\n:END:\n\
+\n* Approach\n- [ ] Brute force\n- [ ] Optimal\n\
+\n* Code\n#+begin_src cpp\n%?\n#+end_src\n\
+\n* Insights\n- Patterns:\n- Pitfalls:\n\
+\n* Links\n;; Insert Topic/Sheet links with M-x org-roam-node-insert\n")
+         :unnarrowed t)
+
+        ;; Topic node (tag with :topic:<slug>:)
+        ("t" "Topic" plain
+         "%?"
+         :if-new (file+head "topics/${slug}.org"
+                            "#+title: ${title}\n#+filetags: :topic:${slug}:\n\
+\n* Overview\n- Patterns:\n- Invariants:\n\n* Resources\n")
+         :unnarrowed t)
+
+        ;; Sheet node (tag with :sheet:<slug>:)
+        ("s" "Sheet" plain
+         "%?"
+         :if-new (file+head "sheets/${slug}.org"
+                            "#+title: ${title}\n#+filetags: :sheet:${slug}:\n\
+,#+roam_refs: %^{Source URL (optional)}\n\
+\n* Description\n- Notes:\n\n* Plan\n- Target finish:\n")
+         :unnarrowed t)
+      ))))
+    ;; (setq! org-capture-templates
+          ;; '(("d" "DRI" entry
+          ;;    (file+olp+datetree "~/Documents/Org/roam/dri.org")
+          ;;    "* %?"
+          ;;    :unnarrowed t)
+          ;;   ("j" "Journal" plain
+          ;;    (file+olp+datetree "~/Documents/journal/org/journal.org")
+          ;;    "%?"
+          ;;    :unnarrowed t
+          ;;    :jump-to-captured t
+          ;;    :before-finalize my/add-journal-metadata))))
 #+END_SRC
-*** Org Roam
+**** Org Roam Capture
 #+begin_src emacs-lisp :tangle yes
 (use-package! org-roam
   :after org
-  :config
-  (setq! org-roam-directory (concat org-directory "/roam"))
-  (setq! org-roam-capture-templates
-                 '(("d" "default" plain "%?"
-                    :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+  :config (setq! org-roam-capture-templates
+                 '(("l" "Log" item "- %u %?"
+                    :target (file+olp "log.org" ("Log"))
+                    :unnarrowed t
+                    :prepend t)
+                   ("w" "Work Item" plain "\n* Log\n\n* Summary\n%?\n\n* Resources"
+                    :if-new (file+head "workitem/${slug}/%<%Y_%m_%d>_${slug}.org" "#+title: ${title}\n#+export_file_name: ${slug}\n#+options: num:nil toc:nil")
                     :unnarrowed t)
-                   ("p" "DSA Practice" plain
-                    "* Attempt %U\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
-                    :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
+                   ("d" "default" plain "%?"
+                    :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                     :unnarrowed t))))
-#+end_src
-
-**** DSA Practice System
-#+begin_src emacs-lisp :tangle yes
-(defun my/dsa-practice-capture ()
-  "Capture DSA practice session from current org heading."
-  (interactive)
-  (when (derived-mode-p 'org-mode)
-    (let* ((heading (org-get-heading t t t t))
-           (id (org-id-get-create))
-           (link (org-store-link nil)))
-      (org-roam-capture- :keys "p"
-                        :node (org-roam-node-create :title heading)
-                        :props (list :immediate-finish nil)))))
-
-(defun my/dsa-update-last-reviewed ()
-  "Update the LAST_REVIEWED property of current heading."
-  (interactive)
-  (org-set-property "LAST_REVIEWED" (format-time-string "%Y-%m-%d"))
-  (let ((attempts (or (org-entry-get nil "ATTEMPTS") "0")))
-    (org-set-property "ATTEMPTS" (number-to-string (1+ (string-to-number attempts))))))
-
-(defun my/dsa-mark-difficulty (level)
-  "Mark difficulty level and schedule appropriate review interval."
-  (interactive (list (completing-read "Difficulty (1=Easy, 5=Hard): "
-                                     '("1" "2" "3" "4" "5"))))
-  (org-set-property "DIFFICULTY" level)
-  (my/dsa-update-last-reviewed)
-  (org-todo "RWD"))
-
-;; Quick DSA practice function
-(defun my/dsa-practice-menu ()
-  "Quick access to DSA practice categories."
-  (interactive)
-  (let ((choice (completing-read "Choose category: "
-                                '(("Arrays" . "da")
-                                  ("Strings" . "ds")
-                                  ("Linked Lists" . "dl")
-                                  ("Trees" . "dt")
-                                  ("Dynamic Programming" . "dp")
-                                  ("Matrix" . "dm")
-                                  ("Heap" . "dh")
-                                  ("Greedy" . "dg")
-                                  ("Backtracking" . "db")
-                                  ("Search & Sort" . "dr")
-                                  ("Mixed Practice" . "dx")))))
-    (org-agenda nil (cdr (assoc choice '(("Arrays" . "da")
-                                        ("Strings" . "ds")
-                                        ("Linked Lists" . "dl")
-                                        ("Trees" . "dt")
-                                        ("Dynamic Programming" . "dp")
-                                        ("Matrix" . "dm")
-                                        ("Heap" . "dh")
-                                        ("Greedy" . "dg")
-                                        ("Backtracking" . "db")
-                                        ("Search & Sort" . "dr")
-                                        ("Mixed Practice" . "dx")))))))
-
-;; Keybindings
-(map! :after org
-      :map org-mode-map
-      :localleader
-      (:prefix ("p" . "DSA Practice")
-       "p" #'my/dsa-practice-capture
-       "d" #'my/dsa-mark-difficulty
-       "m" #'my/dsa-practice-menu))
-
-;; Global keybinding for quick DSA practice
-(map! :leader
-      (:prefix ("n" . "notes")
-       "d" #'my/dsa-practice-menu))
 #+end_src
 
 *** Org Export
