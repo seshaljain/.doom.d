@@ -164,11 +164,12 @@ Capture templates for quick notetaking
 :config
 (setq! org-capture-templates
         '(
-        ("j" "Journal" plain
-        (file+olp+datetree (expand-file-name "journal/journal.org" org-directory))
+        ("j" "Daily Journal" plain
+        (file+olp+datetree "~/Documents/Org/journal/journal.org")
         "%?"
         :unnarrowed t
-        :jump-to-captured t))))
+        :jump-to-captured t
+        :tree-type week))))
 #+END_SRC
 *** Org Roam
 #+begin_src emacs-lisp :tangle yes
