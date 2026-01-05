@@ -84,6 +84,7 @@ This file shouldn't be byte compiled
   :config
   (setq! org-agenda-files (list org-directory
                                 (concat org-directory "/roam")
+                                (concat org-directory "/journal")
                                 (concat org-directory "/dsa")))
 
   ;; DSA Practice Agenda Commands - Category-based filtering
@@ -93,52 +94,52 @@ This file shouldn't be byte compiled
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🔢 Array Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("ds" "String Problems" tags-todo "string"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🔤 String Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dl" "Linked List Problems" tags-todo "ll"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🔗 Linked List Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dt" "Tree Problems" tags-todo "bt"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🌲 Binary Tree Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dp" "Dynamic Programming" tags-todo "dp"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🧮 Dynamic Programming Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dm" "Matrix Problems" tags-todo "matrix"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "📊 Matrix Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dh" "Heap Problems" tags-todo "heap"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "⛰️ Heap Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dg" "Greedy Problems" tags-todo "greedy"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "💰 Greedy Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("db" "Backtracking Problems" tags-todo "backtracking"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "↩️ Backtracking Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dr" "Search & Sort Problems" tags-todo "search_sort"
             ((org-agenda-files (list (concat org-directory "/dsa")))
              (org-agenda-overriding-header "🔍 Search & Sort Problems (TODO)")
              (org-agenda-todo-keyword-format "")
-             (org-agenda-max-entries 5)))
+             (org-agenda-max-entries 10)))
            ("dx" "Mixed Daily Practice"
             ((tags-todo "array" ((org-agenda-files (list (concat org-directory "/dsa")))
                                 (org-agenda-overriding-header "🔢 Arrays")
@@ -154,7 +155,72 @@ This file shouldn't be byte compiled
                              (org-agenda-max-entries 3)))
              (tags-todo "dp" ((org-agenda-files (list (concat org-directory "/dsa")))
                              (org-agenda-overriding-header "🧮 DP")
-                             (org-agenda-max-entries 3))))))))
+                             (org-agenda-max-entries 3)))))))
+
+  ;; Enhanced Habit Tracking
+  (setq! org-habit-show-habits-only-for-today nil
+         org-habit-show-all-today t
+         org-habit-graph-column 50
+         org-habit-preceding-days 21
+         org-habit-following-days 7)
+
+  ;; Add to existing custom commands
+  (setq! org-agenda-custom-commands
+         (append org-agenda-custom-commands
+                 '(("z" . "Comprehensive Views")
+                   ("zd" "Daily Dashboard"
+                    ((agenda "" ((org-agenda-span 1)
+                                 (org-agenda-overriding-header "\n🗓️ Today's Schedule\n")
+                                 (org-agenda-scheduled-leaders '("" "Sched.%2dx: "))
+                                 (org-deadline-warning-days 0)))
+                     (tags-todo "dsa"
+                                ((org-agenda-overriding-header "\n💻 DSA Practice\n")
+                                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'done))
+                                 (org-agenda-max-entries 5)))
+                     (todo "TODO|NEXT"
+                           ((org-agenda-overriding-header "\n📋 Active Tasks\n")
+                            (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
+                            (org-agenda-sorting-strategy '(priority-down category-keep))))))
+
+                   ("zw" "Weekly Review"
+                    ((agenda "" ((org-agenda-span 'week)
+                                 (org-agenda-start-on-weekday 1)
+                                 (org-agenda-overriding-header "\n📅 Week Overview\n")))
+                     (tags-todo "project"
+                                ((org-agenda-overriding-header "\n🎯 Projects\n")
+                                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'done))))
+                     (tags-todo "goal"
+                                ((org-agenda-overriding-header "\n🎯 2026 Goals\n")
+                                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'done))))))
+
+                   ("zh" "Habits & Streaks"
+                    ((agenda "" ((org-agenda-span 7)
+                                 (org-agenda-start-on-weekday 1)
+                                 (org-habit-show-habits-only-for-today nil)
+                                 (org-agenda-overriding-header "\n🔥 Habit Tracker (7 Days)\n")))))
+
+                   ("zp" "All Projects & Goals"
+                    ((tags-todo "project"
+                                ((org-agenda-overriding-header "\n🎯 Active Projects\n")))
+                     (tags-todo "goal"
+                                ((org-agenda-overriding-header "\n🎯 2026 Goals Progress\n")))
+                     (tags-todo "dsa"
+                                ((org-agenda-overriding-header "\n💻 DSA Progress\n")))))))))
+#+end_src
+
+*** Org Habits
+Enable habit tracking
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-habit
+  :after org
+  :config
+  (add-to-list 'org-modules 'org-habit))
+#+end_src
+
+View habit stats
+https://github.com/ml729/org-habit-stats
+#+begin_src emacs-lisp
+(package! org-habit-stats)
 #+end_src
 
 *** Org Capture
