@@ -279,3 +279,10 @@ https://github.com/doomemacs/doomemacs/issues/8203
 (after! evil
   (define-key doom-leader-map (general--kbd "w") evil-window-map))
 #+end_src
+
+*** evil-escape
+Press =j k= quickly to escape to normal mode
+#+begin_src emacs-lisp :tangle yes
+(after! evil-escape
+  (setq! evil-escape-key-sequence "jk"))
+#+end_src
