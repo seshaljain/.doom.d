@@ -111,24 +111,95 @@ https://github.com/ml729/org-habit-stats
 (package! org-habit-stats)
 #+end_src
 
+Journal-based habit tracking: tags in journal auto-mark habits DONE in planning.org
+#+begin_src emacs-lisp :tangle yes
+(defvar my/habit-tag-mapping
+  '(("guitar" . "Guitar")
+    ("cooking" . "Cooking")
+    ("workout" . "Workout")
+    ("meditate" . "Meditate"))
+  "Alist mapping journal tags to habit heading names in planning.org.")
+
+(defvar my/habit-file "~/Documents/Org/journal/planning.org"
+  "File containing habit headings.")
+
+(defvar my/journal-file "~/Documents/Org/journal/journal.org"
+  "Journal file to scan for habit tags.")
+
+(defun my/get-today-habit-tags ()
+  "Get habit tags from today's journal entry."
+  (let ((today (format-time-string "[%Y-%m-%d" (current-time)))
+        (tags '()))
+    (save-excursion
+      (goto-char (point-min))
+      ;; Find today's entry
+      (when (re-search-forward (format "^\\* %s" (regexp-quote today)) nil t)
+        (let ((entry-end (save-excursion (org-end-of-subtree t t) (point))))
+          ;; Scan all headings under today for tags
+          (while (re-search-forward "^\\*+ .+:\\([a-z:]+\\):$" entry-end t)
+            (let ((tag-string (match-string 1)))
+              (dolist (tag (split-string tag-string ":" t))
+                (push tag tags)))))))
+    (delete-dups tags)))
+
+(defun my/mark-habit-done (habit-name)
+  "Mark HABIT-NAME as DONE in planning.org."
+  (save-window-excursion
+    (find-file my/habit-file)
+    (goto-char (point-min))
+    (when (re-search-forward (format "^\\*+ \\(TODO \\)?%s$" (regexp-quote habit-name)) nil t)
+      (org-todo 'done)
+      (save-buffer))))
+
+(defun my/sync-journal-habits ()
+  "Sync habit completions from journal to planning.org."
+  (interactive)
+  (let ((tags (my/get-today-habit-tags))
+        (synced '()))
+    (with-current-buffer (find-file-noselect my/journal-file)
+      (setq tags (my/get-today-habit-tags)))
+    (dolist (tag tags)
+      (when-let ((habit-name (cdr (assoc tag my/habit-tag-mapping))))
+        (my/mark-habit-done habit-name)
+        (push habit-name synced)))
+    (when synced
+      (message "Synced habits: %s" (string-join synced ", ")))))
+
+(defun my/sync-habits-on-capture ()
+  "Sync habits when finalizing journal capture."
+  (when (and (boundp 'org-capture-current-plist)
+             (string= (plist-get org-capture-current-plist :key) "j"))
+    (my/sync-journal-habits)))
+
+(add-hook 'org-capture-after-finalize-hook #'my/sync-habits-on-capture)
+
+(map! :leader
+      :desc "Sync journal habits" "m h s" #'my/sync-journal-habits)
+#+end_src
+
 *** Org Capture
 Capture templates for quick notetaking
 #+BEGIN_SRC emacs-lisp :tangle yes
+(defun my/org-journal-find-date ()
+  "Find or create journal entry for today with inactive timestamp heading."
+  (let ((day (format-time-string "[%Y-%m-%d %a]" (current-time))))
+    (goto-char (point-min))
+    ;; Find existing entry for today
+    (if (re-search-forward (format "^\\* %s" (regexp-quote day)) nil t)
+        (org-end-of-subtree t t)
+      ;; Create new entry at end of file
+      (goto-char (point-max))
+      (insert (format "* %s" day)))))
+
 (use-package! org
   :config
   (setq! org-capture-templates
          '(
-           ("d" "Diet" item
-            (file+olp+datetree "~/Documents/Org/journal/diet.org")
-            "- %?"
-            :unnarrowed t
-            :jump-to-captured t)
            ("j" "Daily Journal" plain
-            (file+olp+datetree "~/Documents/Org/journal/journal.org")
+            (file+function "~/Documents/Org/journal/journal.org" my/org-journal-find-date)
             "%?"
             :unnarrowed t
-            :jump-to-captured t
-            :tree-type week))))
+            :jump-to-captured t))))
 #+END_SRC
 *** Org Roam
 #+begin_src emacs-lisp :tangle yes
@@ -140,9 +211,8 @@ Capture templates for quick notetaking
                  '(("d" "default" plain "%?"
                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                     :unnarrowed t)
-                   ("p" "DSA Practice" plain
-                    "* Attempt %U\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
-                    :if-new (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
+                   ("p" "DSA Practice" plain "* Attempt %U\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
+                    :target (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
                     :unnarrowed t))))
 #+end_src
 
