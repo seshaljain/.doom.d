@@ -199,7 +199,8 @@ Capture templates for quick notetaking
             (file+function "~/Documents/Org/journal/journal.org" my/org-journal-find-date)
             "%?"
             :unnarrowed t
-            :jump-to-captured t))))
+            :jump-to-captured t)
+           )))
 #+END_SRC
 *** Org Roam
 #+begin_src emacs-lisp :tangle yes
@@ -211,9 +212,20 @@ Capture templates for quick notetaking
                  '(("d" "default" plain "%?"
                     :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                     :unnarrowed t)
-                   ("p" "DSA Practice" plain "* Attempt %U\n:PROPERTIES:\n:DATE: %U\n:END:\n\n** Notes\n%?\n\n** Code\n#+begin_src cpp\n\n#+end_src\n\n"
-                    :target (file+head "practice/${slug}.org" "#+title: Practice: ${title}\n#+roam_refs: %l\n#+filetags: :dsa:practice:\n#+startup: overview")
-                    :unnarrowed t))))
+                   ("p" "DSA Practice" plain
+                    "* Attempt %U%?\n** Notes\n\n** Code\n#+begin_src cpp :tangle code.cpp\n\n#+end_src"
+                    :target (file+head "practice/${slug}.org"
+                                       ":PROPERTIES:\n:ROAM_REFS: ${url}\n:END:\n#+title: Practice: ${title}\n#+filetags: ${source-tags}\n\n* Sources\n- ${source-link}")
+                    :immediate-finish t ;; go to captured file directly
+                    :empty-lines-before 1 ;; formatting
+                    :clock-in t ;; start clock
+                    :clock-keep t ;; keep clock, ends clock at end of capture otherwise
+                    :prepend t
+                    :jump-to-captured t)
+                   ("m" "Misc DSA Problem" plain "** %^{Problem} %^g\n:PROPERTIES:\n:URL: %^{URL}\n:END:\n"
+                    :target (file+olp "~/Documents/Org/dsa/misc.org" ("Questions"))
+                    :immediate-finish t
+                    :jump-to-captured t))))
 #+end_src
 
 **** DSA Practice System
@@ -224,39 +236,18 @@ Capture templates for quick notetaking
   (when (derived-mode-p 'org-mode)
     (let* ((heading (org-get-heading t t t t))
            (id (org-id-get-create))
-           (link (org-store-link nil)))
+           (tags (org-get-tags nil t))
+           (url (or (org-entry-get nil "URL" t) ""))
+           (id-link (format "[[id:%s][%s]]" id heading))
+           (tags-str (if tags (concat ":" (string-join tags ":") ":") "")))
       (org-roam-capture- :keys "p"
-                        :node (org-roam-node-create :title heading)
-                        :props (list :immediate-finish nil)))))
+                         :node (org-roam-node-create :title heading)
+                         :info (list :source-link id-link :source-tags tags-str :url url)))))
 
-(defun my/dsa-update-last-reviewed ()
-  "Update the LAST_REVIEWED property of current heading."
-  (interactive)
-  (org-set-property "LAST_REVIEWED" (format-time-string "%Y-%m-%d"))
-  (let ((attempts (or (org-entry-get nil "ATTEMPTS") "0")))
-    (org-set-property "ATTEMPTS" (number-to-string (1+ (string-to-number attempts))))))
-
-(defun my/dsa-mark-difficulty (level)
-  "Mark difficulty level and schedule appropriate review interval."
-  (interactive (list (completing-read "Difficulty (1=Easy, 5=Hard): "
-                                     '("1" "2" "3" "4" "5"))))
-  (org-set-property "DIFFICULTY" level)
-  (my/dsa-update-last-reviewed)
-  (org-todo "RWD"))
-
-(defun my/schedule-for-this-week ()
-  "Add deadline for Sunday of current week."
-  (interactive)
-  (let ((saturday ))
-    (org-todo "TODO")
-    (org-deadline nil (org-read-date nil nil "+sun"))))
-#+end_src
-
-Add keybinding for scheduling interview prep
-#+begin_src emacs-lisp :tangle yes
 (map! :leader
-        :desc "Add weekly task" "m p s" 'my/schedule-for-this-week)
+      :desc "DSA practice capture" "m d p" #'my/dsa-practice-capture)
 #+end_src
+
 *** Org Export
 Syntax highlighting via =Minted=
 #+BEGIN_SRC emacs-lisp :tangle yes
